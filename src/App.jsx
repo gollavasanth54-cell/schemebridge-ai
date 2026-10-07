@@ -1,0 +1,13 @@
+import { AuthProvider } from './context/AuthContext'
+import { NotificationProvider } from './context/NotificationContext'
+import AppRoutes from './routes/AppRoutes'
+
+export default function App() {
+  return (
+    <NotificationProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </NotificationProvider>
+  )
+}
