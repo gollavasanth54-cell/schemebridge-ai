@@ -1,16 +1,30 @@
-# React + Vite
+# SchemeBridge AI
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web app that helps students and citizens discover Indian government schemes and scholarships.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- 🔍 **Discover** 65 government schemes across 10 categories
+- ✅ **Check Eligibility** — preliminary matching based on your profile
+- 🤖 **AI Assistant** — ask questions about schemes, documents, benefits
+- 📘 **Application Guides** — step-by-step walkthroughs
+- 📱 **Responsive** — works on desktop, tablet, and mobile
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+React · Vite · Tailwind CSS · React Router
 
-## Expanding the ESLint configuration
+## Run Locally
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+\`\`\`bash
+npm install
+npm run dev
+\`\`\`
+
+## Status
+
+- ✅ Phase 1 — Project setup & UI foundation
+- ✅ Phase 2 — Scheme database & discovery
+- ✅ Phase 3 — Eligibility matching & application guidance
+- ✅ Phase 4 — AI chatbot assistant
+- 🔜 Phase 5 — Application tracking (planned)
