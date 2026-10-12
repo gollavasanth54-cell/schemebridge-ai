@@ -1,8 +1,10 @@
 import { NavLink } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
+import { useNotifications } from '../../context/NotificationsContext'
 
 export default function Sidebar({ open, onClose }) {
-  const { user } = useAuth()
+  const { user, isAdmin } = useAuth()
+  const { unreadCount } = useNotifications()
 
   const links = [
     { to: '/', label: 'Home', end: true },
@@ -13,16 +15,26 @@ export default function Sidebar({ open, onClose }) {
     ...(user
       ? [
           { to: '/dashboard', label: 'Dashboard' },
+          { to: '/applications', label: 'My Applications' },
+          { to: '/notifications', label: 'Notifications', badge: unreadCount },
           { to: '/profile', label: 'My Profile' },
         ]
       : [
           { to: '/login', label: 'Login' },
           { to: '/register', label: 'Register' },
         ]),
+    ...(isAdmin
+      ? [
+          { to: '/admin', label: '⚡ Admin Dashboard', end: true },
+          { to: '/admin/schemes', label: 'Manage Schemes' },
+          { to: '/admin/categories', label: 'Manage Categories' },
+          { to: '/admin/states', label: 'Manage States' },
+        ]
+      : []),
   ]
 
   const linkClass = ({ isActive }) =>
-    `block rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
+    `flex items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
       isActive ? 'bg-brand-50 text-brand-700' : 'text-slate-700 hover:bg-slate-100'
     }`
 
@@ -43,7 +55,12 @@ export default function Sidebar({ open, onClose }) {
         <nav className="space-y-1">
           {links.map((l) => (
             <NavLink key={l.to} to={l.to} end={l.end} className={linkClass} onClick={onClose}>
-              {l.label}
+              <span>{l.label}</span>
+              {l.badge > 0 && (
+                <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+                  {l.badge > 9 ? '9+' : l.badge}
+                </span>
+              )}
             </NavLink>
           ))}
         </nav>

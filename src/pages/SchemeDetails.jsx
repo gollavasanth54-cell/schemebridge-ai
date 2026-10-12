@@ -1,7 +1,13 @@
-import { useParams, Link } from 'react-router-dom'
+import { useData } from '../context/DataContext'
+// ...
+const { getSchemeById, categories } = useData()
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
+import ApplicationGuide from '../components/common/ApplicationGuide'
 import { getSchemeById, schemeCategories } from '../data/mockData'
+import { useAuth } from '../context/AuthContext'
+import { useNotification } from '../context/NotificationContext'
 
 function Section({ icon, title, children }) {
   return (
@@ -16,6 +22,9 @@ function Section({ icon, title, children }) {
 
 export default function SchemeDetails() {
   const { id } = useParams()
+  const navigate = useNavigate()
+  const { user } = useAuth()
+  const { notify } = useNotification()
   const scheme = getSchemeById(id)
 
   if (!scheme) {
@@ -31,20 +40,25 @@ export default function SchemeDetails() {
     )
   }
 
-  const category = schemeCategories.find(c => c.id === scheme.category)
-  const hasSeparateTracking =
-    scheme.trackingLink && scheme.trackingLink !== scheme.applyLink
+  const category = schemeCategories.find((c) => c.id === scheme.category)
+  const hasSeparateTracking = scheme.trackingLink && scheme.trackingLink !== scheme.applyLink
+
+  const onTrack = () => {
+    if (!user) {
+      notify('Please log in to save this scheme to your applications.', 'info')
+      return navigate('/login')
+    }
+    navigate(`/applications?add=${scheme.id}`)
+  }
 
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
       <nav className="text-sm text-slate-500">
         <Link to="/schemes" className="hover:text-brand-700">Schemes</Link>
         <span className="mx-2">/</span>
         <span className="text-slate-700">{scheme.name}</span>
       </nav>
 
-      {/* Header */}
       <Card className="p-6 sm:p-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
@@ -75,7 +89,6 @@ export default function SchemeDetails() {
 
         <p className="mt-5 text-sm text-slate-700">{scheme.description}</p>
 
-        {/* Apply buttons */}
         <div className="mt-6 flex flex-wrap gap-3">
           <a href={scheme.applyLink} target="_blank" rel="noreferrer">
             <Button size="lg">Apply on Official Portal</Button>
@@ -85,6 +98,9 @@ export default function SchemeDetails() {
               <Button size="lg" variant="secondary">Track Application</Button>
             </a>
           )}
+          <Button size="lg" variant="secondary" onClick={onTrack}>
+            + Track in My Applications
+          </Button>
         </div>
 
         {!hasSeparateTracking && (
@@ -95,12 +111,11 @@ export default function SchemeDetails() {
 
         <p className="mt-4 text-xs text-slate-400">
           Last verified: {new Date(scheme.lastVerified).toLocaleDateString('en-IN', {
-            day: 'numeric', month: 'long', year: 'numeric'
+            day: 'numeric', month: 'long', year: 'numeric',
           })}
         </p>
       </Card>
 
-      {/* Benefits */}
       <Section icon="🎁" title="Benefits">
         <ul className="space-y-2">
           {scheme.benefits.map((b, i) => (
@@ -112,7 +127,6 @@ export default function SchemeDetails() {
         </ul>
       </Section>
 
-      {/* Eligibility */}
       <Section icon="✅" title="Eligibility Criteria">
         <ul className="space-y-2">
           {scheme.eligibility.map((e, i) => (
@@ -122,9 +136,13 @@ export default function SchemeDetails() {
             </li>
           ))}
         </ul>
+        <div className="mt-4">
+          <Link to="/check-eligibility">
+            <Button size="sm" variant="secondary">Check My Eligibility</Button>
+          </Link>
+        </div>
       </Section>
 
-      {/* Documents */}
       <Section icon="📄" title="Required Documents">
         <div className="overflow-x-auto rounded-lg border border-slate-200">
           <table className="w-full text-sm">
@@ -146,8 +164,7 @@ export default function SchemeDetails() {
         </div>
       </Section>
 
-      {/* Steps */}
-      <Section icon="🪜" title="How to Apply — Step by Step">
+      <Section icon="🪜" title="Scheme-specific Steps">
         <ol className="space-y-3">
           {scheme.applicationSteps.map((step, i) => (
             <li key={i} className="flex gap-3 text-sm text-slate-700">
@@ -160,7 +177,8 @@ export default function SchemeDetails() {
         </ol>
       </Section>
 
-      {/* Bottom actions */}
+      <ApplicationGuide applyLink={scheme.applyLink} schemeName={scheme.name} />
+
       <div className="flex flex-wrap gap-3">
         <a href={scheme.applyLink} target="_blank" rel="noreferrer">
           <Button size="lg">Go to Official Apply Page ↗</Button>

@@ -4,13 +4,16 @@ import SearchBar from '../components/common/SearchBar'
 import Button from '../components/common/Button'
 import Card from '../components/common/Card'
 import SchemeCard from '../components/common/SchemeCard'
-import { schemeCategories, popularSchemes, schemes } from '../data/mockData'
 import { useNotification } from '../context/NotificationContext'
+import { useData } from '../context/DataContext'
 
 export default function Home() {
   const navigate = useNavigate()
   const { notify } = useNotification()
+  const { activeSchemes, categories } = useData()
   const [query, setQuery] = useState('')
+
+  const popularSchemes = activeSchemes.slice(0, 6)
 
   const onSearch = (e) => {
     e.preventDefault()
@@ -51,7 +54,7 @@ export default function Home() {
           </div>
 
           <p className="mt-4 text-xs text-brand-100">
-            {schemes.length} schemes available across {schemeCategories.length} categories
+            {activeSchemes.length} schemes available across {categories.length} categories
           </p>
         </div>
       </section>
@@ -65,12 +68,14 @@ export default function Home() {
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
-          {schemeCategories.slice(0, 10).map((c) => (
+          {categories.slice(0, 10).map((c) => (
             <Link key={c.id} to={`/schemes?cat=${c.id}`}>
               <Card className="flex h-full flex-col items-center gap-2 p-4 text-center transition-shadow hover:shadow-md">
                 <span className="text-2xl">{c.icon}</span>
                 <span className="text-xs font-medium leading-tight text-slate-800">{c.name}</span>
-                <span className="text-xs text-slate-400">{c.count} schemes</span>
+                <span className="text-xs text-slate-400">
+                  {activeSchemes.filter((s) => s.category === c.id).length} schemes
+                </span>
               </Card>
             </Link>
           ))}

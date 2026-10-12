@@ -1,3 +1,6 @@
+import { useData } from '../context/DataContext'
+// ...
+const { activeSchemes, categories, states } = useData()
 import { useMemo, useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Card from '../components/common/Card'

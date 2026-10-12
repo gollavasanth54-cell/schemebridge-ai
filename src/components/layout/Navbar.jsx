@@ -1,10 +1,11 @@
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import Logo from '../common/Logo'
 import Button from '../common/Button'
+import NotificationBell from '../notifications/NotificationBell'
 import { useAuth } from '../../context/AuthContext'
 
 export default function Navbar({ onMenuClick }) {
-  const { user, logout } = useAuth()
+  const { user, isAdmin, logout } = useAuth()
   const navigate = useNavigate()
 
   const linkClass = ({ isActive }) =>
@@ -30,19 +31,40 @@ export default function Navbar({ onMenuClick }) {
           </span>
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-6 md:flex">
+        <nav className="ml-6 hidden items-center gap-5 md:flex">
           <NavLink to="/" end className={linkClass}>Home</NavLink>
           <NavLink to="/schemes" className={linkClass}>Schemes</NavLink>
           <NavLink to="/categories" className={linkClass}>Categories</NavLink>
           <NavLink to="/check-eligibility" className={linkClass}>Eligibility</NavLink>
           <NavLink to="/assistant" className={linkClass}>Ask AI</NavLink>
-          {user && <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>}
+          {user && (
+            <>
+              <NavLink to="/dashboard" className={linkClass}>Dashboard</NavLink>
+              <NavLink to="/applications" className={linkClass}>Applications</NavLink>
+            </>
+          )}
+          {isAdmin && (
+            <NavLink
+              to="/admin"
+              className={({ isActive }) =>
+                `text-sm font-semibold transition-colors ${
+                  isActive ? 'text-amber-700' : 'text-amber-600 hover:text-amber-800'
+                }`
+              }
+            >
+              ⚡ Admin
+            </NavLink>
+          )}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
           {user ? (
             <>
-              <Link to="/profile" className="hidden sm:block text-sm font-medium text-slate-600 hover:text-slate-900">
+              <NotificationBell />
+              <Link
+                to="/profile"
+                className="hidden text-sm font-medium text-slate-600 hover:text-slate-900 sm:block"
+              >
                 Profile
               </Link>
               <Button size="sm" variant="secondary" onClick={() => { logout(); navigate('/') }}>
